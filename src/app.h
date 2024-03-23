@@ -8,12 +8,14 @@ enum app_state_t {
 	APP_ACTIVE,
 	APP_BACKGROUND,
 	APP_INACTIVE,
+	APP_EXITED,
 };
 
 class App {
 	static const int apps_max = 16;
 	App *apps[apps_max] = { NULL, };
 public:
+	App *app = NULL; /* last active app */
 	const char *name = NULL;
 	app_state_t state = APP_INACTIVE;
 	App() {};
@@ -28,7 +30,7 @@ public:
 				apps[i] = NULL;
 			}
 		}
-		state = APP_INACTIVE;
+		state = APP_EXITED;
 	};
 	virtual int background() { return APP_NOP; };
 	virtual bool push(App *a) {
@@ -44,22 +46,30 @@ public:
 	virtual bool is_active() {
 		return state == APP_ACTIVE;
 	}
+	virtual bool is_exited() {
+		return state == APP_EXITED;
+	}
 	virtual int process() {
 		int rc = APP_NOP;
+		for (int i = 0; i < apps_max; i ++) {
+			if (apps[i] && apps[i]->state == APP_INACTIVE) {
+				apps[i] = NULL;
+				continue;
+			}
+		}
+
 		for (int i = 0; i < apps_max && rc == APP_NOP; i ++) {
 			App *a = apps[i];
 			if (!a)
 				continue;
-			if (a->state == APP_INACTIVE) {
-				apps[i] = NULL;
-				continue;
-			}
 			if (a->state == APP_ACTIVE)
 				rc = a->process();
 			else if (a->state == APP_BACKGROUND)
-				rc = a->background();
+				a->background();
+			if (rc != APP_NOP)
+				app = apps[i];
 			if (rc == APP_EXIT) {
-				//apps[i]->stop();
+				apps[i]->stop();
 				apps[i] = NULL;
 			}
 		}

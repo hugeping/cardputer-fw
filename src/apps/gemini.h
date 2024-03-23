@@ -5,6 +5,8 @@ class Gemini : public App {
 	View v_status;
 	Edit e_input;
 	Edit e_addr;
+	Screen &scr;
+	Keyboard &kbd;
 	WiFiClientSecure &client;
 	char status[3];
 	char meta[1025];

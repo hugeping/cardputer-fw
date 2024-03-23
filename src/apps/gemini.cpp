@@ -6,14 +6,15 @@ Gemini::Gemini(Screen &scr, Keyboard &kbd, WiFiClientSecure &c) :
 	v_status(scr, kbd),
 	m_links(scr, kbd, MAX_LINKS),
 	e_input(scr, kbd, 1024),
-	e_addr(scr, kbd, 256)
+	e_addr(scr, kbd, 256),
+	scr(scr), kbd(kbd)
 {
 	e_input.oneline = true;
 	e_addr.oneline = true;
 	view.geom(0, 0, COLS-1, ROWS);
 	m_links.geom(0, 0, COLS-1, ROWS);
-	e_input.geom(0, 0, COLS-1, ROWS);
-	e_addr.geom(0, 0, COLS-1, ROWS);
+	e_input.geom(0, 2, COLS-1, ROWS);
+	e_addr.geom(0, 1, COLS-1, ROWS-1);
 }
 
 static bool
@@ -230,6 +231,8 @@ Gemini::request(const char *uri, bool hist)
 {
 	char fmt[1024];
 	bool redirect = false;
+	Serial.println("Request:"+String(uri));
+	kbd.set_fn_mode(true);
 	view.set("Connecting...");
 	view.show();
 	do {
@@ -272,10 +275,10 @@ Gemini::process()
 {
 	char req[1024];
 	int m = App::process();
-	if (view.is_active() && m == KEY_TAB) {
+	if (view.is_active() && (m == KEY_TAB || m == KEY_ENTER)) {
 		view.pause();
 		push(&m_links);
-	} else if (e_addr.is_active()) {
+	} else if (app == &e_addr) {
 		if (m == KEY_ENTER) {
 			e_addr.stop();
 			view.resume();
@@ -283,10 +286,10 @@ Gemini::process()
 			request(req);
 			return APP_NOP;
 		} else if(m == APP_EXIT) {
-			view.resume();
+			push(&m_links);
 			return APP_NOP;
 		}
-	} else if (e_input.is_active()) {
+	} else if (app == &e_input) {
 		if (m == KEY_ENTER) {
 			view.resume();
 			req[0] = '?';
@@ -297,9 +300,11 @@ Gemini::process()
 			view.resume();
 			return APP_NOP;
 		}
-	} else if (m_links.is_active()) {
+	} else if (app == &m_links) {
 		if (m == 0) {
 			m_links.stop();
+			scr.text_clear();
+			scr.text(0, 0, "Address");
 			push(&e_addr);
 		} else if (m > 0) {
 			m_links.stop();
@@ -313,7 +318,8 @@ Gemini::process()
 			hist_size --;
 			request(history[(--hist_pos)%hist_max].c_str(), false);
 		}
-	} else if (view.is_active() && m == APP_EXIT) {
+	} else if (m == APP_EXIT && app == &view) {
+		Serial.println("Gemini exit?");
 		return m;
 	}
 	return APP_NOP;

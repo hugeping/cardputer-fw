@@ -60,7 +60,7 @@ View::process()
 			dirty = true;
 			break;
 		case KEY_RIGHT:
-			down(h-1);
+			down(h);
 			dirty = true;
 			break;
 		case KEY_UP:
@@ -68,11 +68,12 @@ View::process()
 			dirty = true;
 			break;
 		case KEY_LEFT:
-			up(h-1);
+			up(h);
 			dirty = true;
 			break;
 		case KEY_ESC:
 			ret = APP_EXIT;
+			Serial.println("View exit");
 			break;
 		case KEY_BS:
 		case KEY_TAB:

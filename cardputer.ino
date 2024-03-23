@@ -66,8 +66,7 @@ void
 loop()
 {
 	kbd.poll();
-	scr.tft.startWrite();
-	status();
+//	scr.tft.startWrite();
 	int m = app.process();
 	if (main_menu.is_active() && m >= 0) {
 		main_menu.pause();
@@ -92,5 +91,6 @@ loop()
 			gemini = NULL;
 		}
 	}
-	scr.tft.endWrite();
+	status();
+//	scr.tft.endWrite();
 }

@@ -31,11 +31,11 @@ int
 Wifilist::process()
 {
 	int m = App::process();
-	if (m_wifi.is_active() && m >= 0) {
+	if (app == &m_wifi && m >= 0) {
 		m_wifi.pause();
 		m_wifi.clear();
 		push(&e_pass);
-	} else if (m_cancel.is_active()) {
+	} else if (app == &m_cancel) {
 		if (m == KEY_ESC || m == 0) {
 			return APP_EXIT;
 		}
@@ -47,7 +47,7 @@ Wifilist::process()
 			prefs.end();
 			return APP_EXIT;
 		}
-	} else if (e_pass.is_active()) {
+	} else if (app == &e_pass) {
 		if (m == APP_EXIT) {
 			e_pass.stop();
 			m_wifi.resume();
