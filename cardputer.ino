@@ -1,10 +1,13 @@
 #include "external.h"
 #include "internal.h"
 
+WiFiClientSecure sslClient;
+
 Screen scr = Screen();
 Keyboard kbd = Keyboard();
 
-Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Edit", NULL });
+Gemini *gemini = NULL;
+Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Edit", "Gemini", NULL });
 Wifilist wifi(scr, kbd);
 
 Edit *edit = new Edit(scr, kbd, 2048);
@@ -15,6 +18,7 @@ void
 setup()
 {
 	Serial.begin(115200);
+	sslClient.setInsecure();
 	scr.setup();
 	kbd.setup();
 	wifi.setup();
@@ -62,6 +66,8 @@ void
 loop()
 {
 	kbd.poll();
+	scr.tft.startWrite();
+	status();
 	int m = app.process();
 	if (main_menu.is_active() && m >= 0) {
 		main_menu.pause();
@@ -72,9 +78,19 @@ loop()
 		case 1:
 			app.push(edit);
 			break;
+		case 2:
+			if (!gemini)
+				gemini = new Gemini(scr, kbd, sslClient);
+			app.push(gemini);
+			break;
 		}
 	} else if (m == APP_EXIT) {
 		main_menu.resume();
+		if (gemini) {
+			gemini->stop();
+			delete(gemini);
+			gemini = NULL;
+		}
 	}
-	status();
+	scr.tft.endWrite();
 }

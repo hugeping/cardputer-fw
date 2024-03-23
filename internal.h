@@ -6,3 +6,4 @@
 #include "src/menu.h"
 
 #include "src/apps/wifilist.h"
+#include "src/apps/gemini.h"

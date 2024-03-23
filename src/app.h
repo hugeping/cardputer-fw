@@ -59,7 +59,7 @@ public:
 			else if (a->state == APP_BACKGROUND)
 				rc = a->background();
 			if (rc == APP_EXIT) {
-				apps[i]->stop();
+				//apps[i]->stop();
 				apps[i] = NULL;
 			}
 		}

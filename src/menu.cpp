@@ -92,20 +92,20 @@ Menu::process()
 	bool dirty = false;
 	while ((c = kbd.input()) && ret == APP_NOP) {
 		switch(c){
-		case KEY_LEFT:
+		case KEY_UP:
 			sel --;
 			dirty = true;
 			break;
-		case KEY_UP:
-			sel -= h - 1;
-			dirty = true;
-			break;
-		case KEY_RIGHT:
-			sel ++;
+		case KEY_LEFT:
+			sel -= h;
 			dirty = true;
 			break;
 		case KEY_DOWN:
-			sel += h - 1;
+			sel ++;
+			dirty = true;
+			break;
+		case KEY_RIGHT:
+			sel += h;
 			dirty = true;
 			break;
 		case KEY_BS:
@@ -137,5 +137,5 @@ Menu::process()
 
 Menu::~Menu()
 {
-	delete(list);
+	delete[] list;
 }

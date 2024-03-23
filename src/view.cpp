@@ -55,26 +55,27 @@ View::process()
 	bool dirty = false;
 	while ((c = kbd.input(&sym)) && ret == APP_NOP) {
 		switch(c){
-		case KEY_RIGHT:
+		case KEY_DOWN:
 			down();
 			dirty = true;
 			break;
-		case KEY_DOWN:
+		case KEY_RIGHT:
 			down(h-1);
 			dirty = true;
 			break;
-		case KEY_LEFT:
+		case KEY_UP:
 			up();
 			dirty = true;
 			break;
-		case KEY_UP:
+		case KEY_LEFT:
 			up(h-1);
 			dirty = true;
 			break;
-		case KEY_BS:
 		case KEY_ESC:
 			ret = APP_EXIT;
 			break;
+		case KEY_BS:
+		case KEY_TAB:
 		case KEY_ENTER:
 			ret = c;
 			break;
