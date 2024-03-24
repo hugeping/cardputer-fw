@@ -224,11 +224,11 @@ Irc::process()
 			strcpy(fmt, e_input.text());
 			e_input.set("");
 			e_input.show();
-			if (!strcmp(fmt, "/quit") || !strcmp(fmt, "/exit"))
-				return APP_EXIT;
 			irc_input(fmt);
 			sprintf(title, "%s %s", server, channel);
 			tail();
+			if (!strcmp(fmt, "/quit") || !strcmp(fmt, "/exit"))
+				return APP_EXIT;
 		} else if (m == APP_EXIT) {
 			if (cli)
 				return APP_BG;
