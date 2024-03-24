@@ -64,7 +64,7 @@ status()
 	scr.text_clear(x, 0, 1, ROWS, FG, bg);
 	int status = WiFi.status();
 	if (status == WL_CONNECTED)
-		scr.text_glyph(x, 0, '!', FG, bg);
+		scr.text_glyph(x, 0, 1, FG, bg);
 	else
 		scr.text_glyph(x, 0, ' ', FG, bg);
 
@@ -79,9 +79,9 @@ status()
 		scr.text_glyph(x, ROWS-3, 'a',  scr.color(0, 0, 255), bg);
 
 	if (kbd.get_fn())
-		scr.text_glyph(x, ROWS-2, 'f', 0xffff, scr.color(0xff, 0x80, 0));
+		scr.text_glyph(x, ROWS-2, 2, 0xffff, scr.color(0xff, 0x80, 0));
 	else
-		scr.text_glyph(x, ROWS-2, 'f', scr.color(0xff, 0x80, 0), bg);
+		scr.text_glyph(x, ROWS-2, 2, scr.color(0xff, 0x80, 0), bg);
 
 	if (kbd.get_layout())
 		scr.text_glyph(x, ROWS-1, 0x44f, bg, scr.color(0, 255, 0));
