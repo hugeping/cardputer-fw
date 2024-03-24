@@ -349,7 +349,6 @@ Irc::select_menu()
 	e_input.show();
 
 	push(&e_server);
-	kbd.set_fn_mode(true);
 }
 
 void
