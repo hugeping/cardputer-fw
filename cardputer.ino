@@ -5,7 +5,9 @@ Screen scr = Screen();
 Keyboard kbd = Keyboard();
 
 Gemini *gemini = NULL;
-Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Edit", "Gemini", NULL });
+Irc *irc = NULL;
+
+Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Edit", "Gemini", "IRC", NULL });
 Wifilist wifi(scr, kbd);
 
 Edit *edit = new Edit(scr, kbd, 2048);
@@ -65,6 +67,8 @@ status()
 	else
 		scr.text_glyph(x, 0, ' ', FG, bg);
 
+	if (irc)
+		scr.text_glyph(x, ROWS-5, '#', 0xffff, bg);
 	if (kbd.get_ctrl())
 		scr.text_glyph(x, ROWS-4, '^', 0xffff, bg);
 	else if (kbd.get_alt())
@@ -108,6 +112,15 @@ loop()
 				gemini = new Gemini(scr, kbd);
 			app.push(gemini);
 			break;
+		case 3:
+			if (!irc) {
+				irc = new Irc(scr, kbd);
+				app.push(irc);
+			} else {
+				Serial.println("Resume irc");
+				irc->resume();
+			}
+			break;
 		}
 	} else if (m == APP_EXIT) {
 		if (app.app == &main_menu) {
@@ -118,8 +131,15 @@ loop()
 				gemini->stop();
 				delete(gemini);
 				gemini = NULL;
+			} else if (irc) {
+				irc->stop();
+				delete(irc);
+				irc = NULL;
 			}
 		}
+	} else if (m == APP_BG) {
+		Serial.println("App goes bg");
+		main_menu.resume();
 	}
 	status();
 	scr.tft.endWrite();

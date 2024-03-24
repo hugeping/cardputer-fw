@@ -25,6 +25,7 @@ public:
 	~Edit();
 
 	void start();
+	void resume() { App::resume(); show(); };
 	void up();
 	void down();
 	void set(const char *text);

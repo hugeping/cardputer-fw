@@ -71,7 +71,7 @@ Menu::show()
 	int nr = (sel / hh)*hh;
 	for (int pos = nr; pos < len && yy < y + h; pos ++) {
 		const char *text = list[pos].c_str();
-		if (pos == sel) {
+		if (pos == sel && is_active()) {
 			scr.text_clear(x, yy, w, 1, FG, scr.color(0, 0, 255));
 			scr.text_scrolled(x, yy, text, w, sel_offset);
 		} else {

@@ -3,12 +3,12 @@
 
 #define APP_EXIT -1
 #define APP_NOP -2
+#define APP_BG -3
 
 enum app_state_t {
 	APP_ACTIVE,
 	APP_BACKGROUND,
 	APP_INACTIVE,
-	APP_EXITED,
 };
 
 class App {
@@ -30,7 +30,7 @@ public:
 				apps[i] = NULL;
 			}
 		}
-		state = APP_EXITED;
+		state = APP_INACTIVE;
 	};
 	virtual void background() { };
 	virtual bool push(App *a) {
@@ -45,9 +45,6 @@ public:
 	}
 	virtual bool is_active() {
 		return state == APP_ACTIVE;
-	}
-	virtual bool is_exited() {
-		return state == APP_EXITED;
 	}
 	virtual int process() {
 		int rc = APP_NOP;
@@ -71,7 +68,8 @@ public:
 			if (rc == APP_EXIT) {
 				apps[i]->stop();
 				apps[i] = NULL;
-			}
+			} else if (rc == APP_BG)
+				apps[i]->state = APP_BACKGROUND;
 		}
 		return rc;
 	}

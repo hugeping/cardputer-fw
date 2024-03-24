@@ -156,6 +156,7 @@ Edit::process()
 		case KEY_ESC:
 			ret = APP_EXIT;
 			break;
+		case KEY_TAB:
 		case KEY_ENTER:
 			ret = c;
 			break;
@@ -192,7 +193,7 @@ Edit::show()
 		codepoint_t cp = buf[pos];
 		int ox = xx + x;
 		int oy = yy + y;
-		bool atcur = (cur == pos); // && active;
+		bool atcur = (cur == pos) && is_active();
 		cur_visible |= atcur;
 		scr.text_glyph(ox, oy, 0, 0, (atcur)?FG:BG);
 		if (utf8::fmt_next(buf, &pos, len, w, &xx, &yy))

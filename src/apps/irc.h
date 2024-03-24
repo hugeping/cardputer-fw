@@ -1,0 +1,37 @@
+class Irc : public App {
+	static const int menus_nr = 4;
+	View view;
+	Edit e_input;
+	Edit e_server;
+	Edit e_port;
+	Edit e_nick;
+	Edit e_passwd;
+	Screen &scr;
+	Keyboard &kbd;
+	Preferences prefs;
+	App *menus[menus_nr] = { &e_server, &e_port, &e_nick, &e_passwd };
+	Client *cli = NULL;
+	char server[128];
+	int port = 6697;
+	char pass[64];
+	char nick[64];
+	char host[64];
+	char last_usr[64];
+	char channel[64];
+	char title[64];
+	bool connect(const char *host, int port);
+	void irc_reply(char *cmd);
+	void irc_input(char *cmd);
+	void privmsg(char *channel, char *msg);
+	void tail();
+	void select_menu();
+	void show_menu();
+	void connect_irc();
+public:
+	void background();
+	void resume();
+	int process();
+	Irc(Screen &scr, Keyboard &kbd);
+	~Irc() { };
+	void start();
+};
