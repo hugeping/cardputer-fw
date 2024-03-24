@@ -1,6 +1,7 @@
 #ifndef __SCREEN_H_INCLUDED
 #define __SCREEN_H_INCLUDED
 #include <M5GFX.h>
+//#include <TFT_eSPI.h>
 #include "../font8x15.h"
 #include "utf8.h"
 
@@ -29,13 +30,15 @@ class Screen
 	const uint8_t* lookup_glyph(codepoint_t cp);
 	int text_xoff = 0;
 	int text_yoff = 0;
-	int cols = COLS;
-	int rows = ROWS;
 	cell_t *get_screen();
 	cell_t *get_old_screen();
 	void update_cell(int x, int y, cell_t *cell);
 public:
+	int cols = COLS;
+	int rows = ROWS;
+
 	M5GFX tft;
+//	TFT_eSPI tft;
 	Screen();
 	void setup();
 	void draw_text(int x, int y, const char *str,
@@ -46,7 +49,7 @@ public:
 
 	bool text_scroll(const char *str, int w, long *otick);
 	void text_scrolled(int x, int y, const char *text, int w, int offset);
-	void text(int tx, int ty, const char *str, bool brk = false);
+	void text(int tx, int ty, const char *str, bool brk = false, int maxw = COLS);
 	void text_glyph(int tx, int ty, codepoint_t cp,
 		color_t fg = FG, color_t bg = BG);
 

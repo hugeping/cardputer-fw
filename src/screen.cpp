@@ -10,6 +10,7 @@ Screen::setup()
 	memset(screens, 0xff, COLS*ROWS*sizeof(cell_t)*2);
 	tft.setRotation(1);
 	tft.fillRect(0, 0, W, H, color(128, 128, 0));
+//	_set_pwm_backlight(GPIO_NUM_38, 7, 256, false, 16);
 	text_clear();
 }
 
@@ -52,9 +53,10 @@ Screen::draw_glyph(int x, int y, codepoint_t cp, color_t fg, color_t bg)
 	for (yy = 0; yy < font->h; yy++) {
 		uint8_t b = pgm_read_byte(p);
 		for (xx = 0; xx < font->w; xx++) {
+			tft.pushBlock((b&1)?fg:bg, 1);
 //			tft.fillRect(x + xx, y + yy, 1, 1, (b&1)?fg:bg);
-			tft.setColor((b&1)?fg:bg);
-			tft.writeFillRect(x + xx, y + yy, 1, 1);
+//			tft.setColor((b&1)?fg:bg);
+//			tft.writeFillRectPreclipped(x + xx, y + yy, 1, 1);
 			b >>= 1;
 		}
 		p ++;
@@ -116,7 +118,7 @@ Screen::text_scrolled(int x, int y, const char *t, int w, int offset)
 		n = n - abs(n - (offset)%(2*n));
 		t = utf8::index(t, n);
 	}
-	text(x, y, t);
+	text(x, y, t, false, x + w);
 }
 
 bool
@@ -142,7 +144,7 @@ Screen::text_glyph(int x, int y, codepoint_t cp, color_t fg, color_t bg)
 }
 
 void
-Screen::text(int x, int y, const char *str, bool brk)
+Screen::text(int x, int y, const char *str, bool brk, int maxw)
 {
 	const char *ptr = str;
 	codepoint_t cp = 0;
@@ -155,12 +157,12 @@ Screen::text(int x, int y, const char *str, bool brk)
 			c += cols;
 			x = ox;
 		} else {
-			if (brk && x >= cols) {
+			if (brk && x >= maxw) {
 				x = ox;
 				y ++;
 				c += cols;
 			}
-			if (x < cols && y < rows) {
+			if (x < maxw && y < rows) {
 				c[x].glyph = cp;
 				x ++;
 			}

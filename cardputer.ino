@@ -19,6 +19,7 @@ setup()
 {
 	Serial.begin(115200);
 	sslClient.setInsecure();
+	adc_read_init();
 	scr.setup();
 	kbd.setup();
 	wifi.setup();
@@ -27,10 +28,38 @@ setup()
 	edit->geom(0, 0, COLS-1, ROWS);
 	app.push(&main_menu);
 }
+
+static long bat_ms = 0;
+
+void
+battery()
+{
+	float bat = adc_read_get_value() * 2 / 1000;
+	int pcnt = 0;
+	scr.tft.fillRect(W - FONT_W + 1, FONT_H + 1, FONT_W - 2, FONT_H - 2,
+		scr.color(128, 128, 128));
+	scr.tft.fillRect(W - FONT_W + 2, FONT_H + 2, FONT_W - 4, FONT_H - 4,
+		scr.color(0, 255, 0));
+	if (bat >= 4.12)
+		pcnt = 100;
+	else if (bat >= 3.88)
+		pcnt = 75;
+	else if (bat >= 3.61)
+		pcnt = 50;
+	else if (bat >= 3.40)
+		pcnt = 25;
+	pcnt = (100 - pcnt)*(FONT_H - 4)/100;
+	scr.tft.fillRect(W - FONT_W + 2, FONT_H + 2, FONT_W - 4, pcnt, BG);
+}
+
 void
 status()
 {
 	const uint32_t bg = 0;
+	if (millis() - bat_ms > 1000) {
+		bat_ms = millis();
+		battery();
+	}
 	int x = COLS-1;
 	scr.text_clear(x, 0, 1, ROWS, FG, bg);
 	int status = WiFi.status();
@@ -66,7 +95,7 @@ void
 loop()
 {
 	kbd.poll();
-//	scr.tft.startWrite();
+	scr.tft.startWrite();
 	int m = app.process();
 	if (main_menu.is_active() && m >= 0) {
 		main_menu.pause();
@@ -92,5 +121,5 @@ loop()
 		}
 	}
 	status();
-//	scr.tft.endWrite();
+	scr.tft.endWrite();
 }

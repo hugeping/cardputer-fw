@@ -76,7 +76,7 @@ Menu::show()
 			scr.text_scrolled(x, yy, text, w, sel_offset);
 		} else {
 			scr.text_clear(x, yy, w, 1, FG, BG);
-			scr.text(x, yy, text);
+			scr.text(x, yy, text, false, w + x);
 		}
 		yy ++;
 	}

@@ -194,7 +194,7 @@ Gemini::reqURI(const char *uri, bool hist)
 //		view.title = server;
 		if (!client.connect(server, 1965))
 			return false;
-	} else if (/*(uri[0] == '/' || uri[0] == '.') && */server) {
+	} else if (server) {
 		if (!client.connect(server, 1965))
 			return false;
 		if (uri[0] != '/')
@@ -238,10 +238,11 @@ Gemini::request(const char *uri, bool hist)
 	do {
 		if (!reqURI(uri, hist)) {
 			client.stop();
-			sprintf(fmt, "%s\nConnection error", last_url);
+			sprintf(fmt, "%s\nConnection error",
+				last_url?last_url:"NULL");
 			message(fmt);
 			return false;
-		} if (status[0] == '1') {
+		} else if (status[0] == '1') {
 			client.stop();
 			input(meta);
 			return true;
