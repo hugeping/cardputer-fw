@@ -135,7 +135,7 @@ Keyboard::process_event(uint8_t state[4][14], uint8_t key, bool press)
 
 	sym = &keymap[key/14][key%14];
 	uint8_t code = sym->code;
-	Serial.println("Pressed: "+String(code));
+//	Serial.println("Pressed: "+String(code));
 	if (fn && sym->sym[layout].fn_code) {
 		code = sym->sym[layout].fn_code;
 		s = NULL;

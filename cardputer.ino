@@ -1,8 +1,6 @@
 #include "external.h"
 #include "internal.h"
 
-WiFiClientSecure sslClient;
-
 Screen scr = Screen();
 Keyboard kbd = Keyboard();
 
@@ -18,7 +16,6 @@ void
 setup()
 {
 	Serial.begin(115200);
-	sslClient.setInsecure();
 	adc_read_init();
 	scr.setup();
 	kbd.setup();
@@ -108,7 +105,7 @@ loop()
 			break;
 		case 2:
 			if (!gemini)
-				gemini = new Gemini(scr, kbd, sslClient);
+				gemini = new Gemini(scr, kbd);
 			app.push(gemini);
 			break;
 		}

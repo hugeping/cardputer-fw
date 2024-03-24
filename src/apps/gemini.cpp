@@ -1,8 +1,8 @@
 #include "../../external.h"
 #include "../../internal.h"
 
-Gemini::Gemini(Screen &scr, Keyboard &kbd, WiFiClientSecure &c) :
-	view(scr, kbd), client(c),
+Gemini::Gemini(Screen &scr, Keyboard &kbd) :
+	view(scr, kbd),
 	v_status(scr, kbd),
 	m_links(scr, kbd, MAX_LINKS),
 	e_input(scr, kbd, 1024),
@@ -224,7 +224,11 @@ Gemini::message(const char *msg)
 void
 Gemini::input(const char *msg)
 {
-//	e_input.title = msg;
+	view.pause();
+	int x, y;
+	scr.off2xy(scr.text(0, 0, msg, true, COLS-1, ROWS), NULL, &y);
+	y = min(ROWS-1, ++y);
+	e_input.geom(0, y, COLS-1, 1);
 	push(&e_input);
 }
 
@@ -316,7 +320,8 @@ Gemini::process()
 		} else if (m == APP_EXIT)
 			view.resume();
 		return APP_NOP;
-	} else if (view.is_active() && m == KEY_BS) {
+	} else if (view.is_active() &&
+		(m == KEY_BS || m == KEY_DEL)) {
 		if (hist_size > 0) {
 			hist_size --;
 			request(history[(--hist_pos)%hist_max].c_str(), false);
@@ -332,6 +337,7 @@ void
 Gemini::start()
 {
 //	kbd.set_fn_mode(true);
+	client.setInsecure();
 	App::start();
 	push(&view);
 	if (!server) {

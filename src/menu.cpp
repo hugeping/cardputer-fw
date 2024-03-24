@@ -80,7 +80,7 @@ Menu::show()
 		}
 		yy ++;
 	}
-	Serial.println("Show menu");
+//	Serial.println("Show menu");
 	scr.text_update();
 }
 

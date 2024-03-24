@@ -76,6 +76,7 @@ View::process()
 			Serial.println("View exit");
 			break;
 		case KEY_BS:
+		case KEY_DEL:
 		case KEY_TAB:
 		case KEY_ENTER:
 			ret = c;

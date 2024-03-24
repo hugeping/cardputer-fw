@@ -49,7 +49,9 @@ public:
 
 	bool text_scroll(const char *str, int w, long *otick);
 	void text_scrolled(int x, int y, const char *text, int w, int offset);
-	void text(int tx, int ty, const char *str, bool brk = false, int maxw = COLS);
+	int text(int tx, int ty, const char *str,
+		bool brk = false, int maxw = COLS, int maxh = ROWS);
+	void off2xy(int off, int *x, int *y) { if (y) *y = off / cols; if (x) *x = off % cols; };
 	void text_glyph(int tx, int ty, codepoint_t cp,
 		color_t fg = FG, color_t bg = BG);
 

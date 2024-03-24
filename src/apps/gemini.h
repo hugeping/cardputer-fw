@@ -7,7 +7,7 @@ class Gemini : public App {
 	Edit e_addr;
 	Screen &scr;
 	Keyboard &kbd;
-	WiFiClientSecure &client;
+	WiFiClientSecure client;
 	char status[3];
 	char meta[1025];
 	String links[MAX_LINKS];
@@ -28,7 +28,7 @@ class Gemini : public App {
 public:
 	int process();
 	bool request(const char *uri, bool hist = true);
-	Gemini(Screen &scr, Keyboard &kbd, WiFiClientSecure &c);
+	Gemini(Screen &scr, Keyboard &kbd);
 	~Gemini() { free(server); free(last_url); };
 	void start();
 };

@@ -143,8 +143,8 @@ Screen::text_glyph(int x, int y, codepoint_t cp, color_t fg, color_t bg)
 	c[x].bg = bg;
 }
 
-void
-Screen::text(int x, int y, const char *str, bool brk, int maxw)
+int
+Screen::text(int x, int y, const char *str, bool brk, int maxw, int maxh)
 {
 	const char *ptr = str;
 	codepoint_t cp = 0;
@@ -162,15 +162,16 @@ Screen::text(int x, int y, const char *str, bool brk, int maxw)
 				y ++;
 				c += cols;
 			}
-			if (x < maxw && y < rows) {
+			if (x < maxw) {
 				c[x].glyph = cp;
 				x ++;
 			}
 		}
-	} while(*ptr && y < rows);
+	} while(*ptr && y < maxh);
+	return y*cols + x;
 }
-void
 
+void
 Screen::text_update(bool force)
 {
 	cell_t *line = get_screen();
