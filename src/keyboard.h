@@ -103,7 +103,7 @@ class Keyboard
 	static const int fifo_len = 8;
 	static const int poll_filter = 8;
 
-	uint8_t layout;
+	uint8_t layout = 0;
 	static uint8_t state[4][14];
 	struct {
 		int start;

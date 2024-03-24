@@ -7,7 +7,6 @@ uint8_t Keyboard::state[4][14];
 Keyboard::Keyboard()
 {
 	inp_fifo = { 0, 0, { }};
-	layout = 1;
 }
 
 static const uint8_t out_list[3] = {8, 9, 11};

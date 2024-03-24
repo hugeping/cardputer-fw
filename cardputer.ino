@@ -73,12 +73,12 @@ status()
 	if (kbd.get_shift())
 		scr.text_glyph(x, ROWS-3, 'A', 0xffff, scr.color(0, 0, 255));
 	else
-		scr.text_glyph(x, ROWS-3, 'a',  scr.color(0, 0, 255), bg);
+		scr.text_glyph(x, ROWS-3, 'a',  0xffff, bg);
 
 	if (kbd.get_fn())
 		scr.text_glyph(x, ROWS-2, 2, 0xffff, scr.color(0xff, 0x80, 0));
 	else
-		scr.text_glyph(x, ROWS-2, 2, scr.color(0xff, 0x80, 0), bg);
+		scr.text_glyph(x, ROWS-2, 2, 0xffff, bg);
 
 	if (kbd.get_layout())
 		scr.text_glyph(x, ROWS-1, 0x44f, bg, scr.color(0, 255, 0));
