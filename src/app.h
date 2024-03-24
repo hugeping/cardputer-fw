@@ -32,7 +32,7 @@ public:
 		}
 		state = APP_EXITED;
 	};
-	virtual int background() { return APP_NOP; };
+	virtual void background() { };
 	virtual bool push(App *a) {
 		for (int i = 0; i < apps_max; i ++) {
 			if (apps[i])
