@@ -154,7 +154,10 @@ Irc::irc_reply(char *cmd)
 	if (!strcmp("PONG", cmd))
 		return;
 	if (!strcmp("PRIVMSG", cmd)) {
-		sprintf(fmt, "<%s> %s", usr, txt);
+		if (!strcmp(par, channel))
+			sprintf(fmt, "<%s> %s", usr, txt);
+		else
+			sprintf(fmt, "%s: <%s> %s", par, usr, txt);
 		view.append(fmt);
 	} else if (!strcmp("PING", cmd)) {
 		sprintf(fmt, "PONG ", txt);
@@ -199,9 +202,9 @@ Irc::background()
 		irc_reply(fmt);
 		view.trim_head(view.h*30);
 		if (rate++ % view.h == 0)
-			break;
-//			tail();
+			tail();
 	}
+	tail();
 }
 
 int
@@ -209,7 +212,6 @@ Irc::process()
 {
 	char fmt[1024];
 	background();
-	tail();
 	int m = App::process();
 	if (app == &e_input) {
 		if (m == KEY_UP) {
