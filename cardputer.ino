@@ -113,11 +113,15 @@ loop()
 			break;
 		}
 	} else if (m == APP_EXIT) {
-		main_menu.resume();
-		if (gemini) {
-			gemini->stop();
-			delete(gemini);
-			gemini = NULL;
+		if (app.app == &main_menu) {
+			app.push(&main_menu);
+		} else {
+			main_menu.resume();
+			if (gemini) {
+				gemini->stop();
+				delete(gemini);
+				gemini = NULL;
+			}
 		}
 	}
 	status();

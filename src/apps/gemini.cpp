@@ -72,9 +72,10 @@ Gemini::req(const char* req)
 	len -= 3;
 	if (len > 1024)
 		memcpy(meta, str, 1024);
-	else
+	else {
 		strcpy(meta, str);
-	meta[strcspn(meta, "\r")] = 0;
+		meta[strcspn(meta, "\r")] = 0;
+	}
 	meta[1024] = 0;
 	return true;
 }
@@ -180,9 +181,10 @@ Gemini::reqURI(const char *uri, bool hist)
 {
 	char url[1025];
 	const char *ptr = uri;
+//	Serial.println("reqURI:"+String(uri));
 	if (last_url && hist) {
 		history[(hist_pos++)%hist_max] = String(last_url);
-		hist_size ++;
+		hist_size = max(++hist_size, hist_max);
 	}
 	if (!strncmp(uri, "gemini://", 9)) {
 		free(server);

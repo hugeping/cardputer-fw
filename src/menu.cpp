@@ -4,8 +4,8 @@
 void
 Menu::start()
 {
-	resume();
 	sel = 0;
+	resume();
 }
 
 void

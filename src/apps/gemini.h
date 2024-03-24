@@ -17,7 +17,7 @@ class Gemini : public App {
 	static const int hist_max = 16;
 	String history[hist_max];
 	int hist_size;
-	int hist_pos;
+	int hist_pos = 0;
 	bool req(const char *req);
 	void body();
 	void input(const char *msg);
