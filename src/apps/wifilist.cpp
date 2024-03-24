@@ -6,13 +6,13 @@ Wifilist::Wifilist(Screen &scr, Keyboard &kbd) :
 	m_wifi(scr, kbd, 64),
 	m_cancel(scr, kbd, wifi_cancel_menu),
 	e_pass(scr, kbd, 128),
-	v_info(scr, kbd)
+	v_info(scr, kbd), scr(scr)
 {
 	e_pass.oneline = true;
 	e_pass.set("");
 	m_wifi.geom(0, 0, COLS - 1, ROWS - 2);
 	v_info.geom(0, 0, COLS - 1, ROWS - 2);
-	e_pass.geom(0, 0, COLS - 1, 1);
+	e_pass.geom(0, 1, COLS - 1, 1);
 	m_cancel.geom(0, ROWS-2, COLS - 1, 2);
 }
 
@@ -34,6 +34,7 @@ Wifilist::process()
 	if (app == &m_wifi && m >= 0) {
 		m_wifi.pause();
 		m_wifi.clear();
+		scr.text(0, 0, "Password");
 		push(&e_pass);
 	} else if (app == &m_cancel) {
 		if (m == KEY_ESC || m == 0) {

@@ -3,6 +3,7 @@ class Wifilist : public App {
 	Menu m_cancel;
 	Menu m_wifi;
 	View v_info;
+	Screen &scr;
 	Preferences prefs;
 public:
 
