@@ -17,6 +17,17 @@ Edit::Edit(Screen &screen, Keyboard &keys, const char *text) : scr(screen), kbd(
 	set(text);
 }
 
+uint32_t
+Edit::hash()
+{
+	uint32_t hval = 0x811c9dc5;
+	for (int i = 0; i < len; i ++) {
+		hval *= 0x01000193;
+		hval ^= buf[i];
+	}
+	return hval;
+}
+
 Edit::~Edit()
 {
 	delete(buf);

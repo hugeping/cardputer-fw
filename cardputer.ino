@@ -11,8 +11,9 @@ Settings settings = Settings(scr, kbd);
 
 Gemini *gemini = NULL;
 Irc *irc = NULL;
+Notes *notes = NULL;
 
-Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Edit", "Gemini", "IRC", "Settings", NULL });
+Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Notes", "Gemini", "IRC", "Settings", NULL });
 Wifilist wifi(scr, kbd);
 
 Edit *edit = new Edit(scr, kbd, 2048);
@@ -41,7 +42,7 @@ battery()
 {
 	float bat = adc_read_get_value() * 2 / 1000;
 	int pcnt = 0;
-	Serial.println("Bat: " + String(bat));
+//	Serial.println("Bat: " + String(bat));
 	scr.tft.fillRect(W - FONT_W + 1, FONT_H + 1, FONT_W - 2, FONT_H - 2,
 		scr.color(128, 128, 128));
 	scr.tft.fillRect(W - FONT_W + 2, FONT_H + 2, FONT_W - 4, FONT_H - 4,
@@ -112,7 +113,9 @@ loop()
 			app.push(&wifi);
 			break;
 		case 1:
-			app.push(edit);
+			if (!notes)
+				notes = new Notes(scr, kbd);
+			app.push(notes);
 			break;
 		case 2:
 			if (!gemini)
@@ -137,14 +140,15 @@ loop()
 			app.push(&main_menu);
 		} else {
 			main_menu.resume();
-			if (gemini) {
-				gemini->stop();
+			if (app.app == gemini) {
 				delete(gemini);
 				gemini = NULL;
-			} else if (irc) {
-				irc->stop();
+			} else if (app.app == irc) {
 				delete(irc);
 				irc = NULL;
+			} else if (app.app == notes) {
+				delete(notes);
+				notes = NULL;
 			}
 		}
 	} else if (m == APP_BG) {

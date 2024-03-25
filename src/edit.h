@@ -1,10 +1,10 @@
 class Edit : public App {
-	codepoint_t *buf;
 	Screen &scr;
 	Keyboard &kbd;
 	boolean cur_visible;
 	void visible();
 public:
+	codepoint_t *buf;
 	boolean oneline = false;
 	int x = 0;
 	int y = 0;
@@ -24,6 +24,7 @@ public:
 	Edit(Screen &scr, Keyboard &kbd, const char *text);
 	~Edit();
 
+	uint32_t hash();
 	void start();
 	void resume() { App::resume(); show(); };
 	void up();
