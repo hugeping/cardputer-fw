@@ -26,7 +26,7 @@ public:
 
 	uint32_t hash();
 	void start();
-	void resume() { App::resume(); show(); };
+	void resume() { App::resume(); kbd.set_fn_mode(false); show(); };
 	void up();
 	void down();
 	void set(const char *text);
