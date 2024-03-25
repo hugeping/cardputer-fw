@@ -62,7 +62,7 @@ battery()
 void
 status()
 {
-	const uint32_t bg = 0;
+	const uint32_t bg = scr.color(0x33, 0x33, 0x33);
 	if (millis() - bat_ms > 1000) {
 		bat_ms = millis();
 		battery();

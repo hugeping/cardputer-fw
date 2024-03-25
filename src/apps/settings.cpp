@@ -30,7 +30,7 @@ Settings::setup()
 		set_br = 128;
 	prefs.end();
 	set_br = min(set_br, 255);
-	set_br = max(set_br, 1);
+	set_br = max(set_br, 5);
 	scr.tft.setBrightness(set_br);
 }
 
