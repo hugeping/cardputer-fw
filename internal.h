@@ -9,3 +9,4 @@
 #include "src/apps/wifilist.h"
 #include "src/apps/gemini.h"
 #include "src/apps/irc.h"
+#include "src/apps/settings.h"

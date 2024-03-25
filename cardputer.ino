@@ -7,11 +7,12 @@ https://github.com/m5stack/M5GFX
 */
 Screen scr = Screen();
 Keyboard kbd = Keyboard();
+Settings settings = Settings(scr, kbd);
 
 Gemini *gemini = NULL;
 Irc *irc = NULL;
 
-Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Edit", "Gemini", "IRC", NULL });
+Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Edit", "Gemini", "IRC", "Settings", NULL });
 Wifilist wifi(scr, kbd);
 
 Edit *edit = new Edit(scr, kbd, 2048);
@@ -23,6 +24,7 @@ setup()
 {
 	Serial.begin(115200);
 	adc_read_init();
+	settings.setup();
 	scr.setup();
 	kbd.setup();
 	wifi.setup();
@@ -39,6 +41,7 @@ battery()
 {
 	float bat = adc_read_get_value() * 2 / 1000;
 	int pcnt = 0;
+	Serial.println("Bat: " + String(bat));
 	scr.tft.fillRect(W - FONT_W + 1, FONT_H + 1, FONT_W - 2, FONT_H - 2,
 		scr.color(128, 128, 128));
 	scr.tft.fillRect(W - FONT_W + 2, FONT_H + 2, FONT_W - 4, FONT_H - 4,
@@ -124,6 +127,9 @@ loop()
 				Serial.println("Resume irc");
 				irc->resume();
 			}
+			break;
+		case 4:
+			app.push(&settings);
 			break;
 		}
 	} else if (m == APP_EXIT) {
