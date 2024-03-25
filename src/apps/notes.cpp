@@ -4,7 +4,7 @@
 Notes::Notes(Screen &screen, Keyboard &keys) : scr(screen), kbd(keys),
         m_toc(screen, keys, toc_max)
 {
-        m_toc.geom(0, 0, COLS-1, ROWS-1);
+        m_toc.geom(0, 0, COLS-1, ROWS);
 }
 
 void
