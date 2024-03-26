@@ -30,7 +30,7 @@ Edit::hash()
 
 Edit::~Edit()
 {
-	delete(buf);
+	delete [](buf);
 	free(text_buf);
 	text_buf = NULL;
 	text_size = 0;
@@ -61,13 +61,19 @@ Edit::set(const char *text)
 	const char *ptr = text;
 	codepoint_t cp;
 	int i = 0;
+	int sz = utf8::len(text);
+	if (sz > size) {
+		free(buf);
+		buf = new codepoint_t[sz+1];
+		size = sz;
+	}
 	while (*ptr && i < size) {
 		ptr = utf8::to_codepoint(ptr, &cp);
 		buf[i++] = cp;
 	}
 	buf[i] = 0;
 	len = i;
-	cur = 0;
+	cur = off = 0;
 }
 
 void

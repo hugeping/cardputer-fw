@@ -2,9 +2,11 @@
 #include "../../internal.h"
 
 Notes::Notes(Screen &screen, Keyboard &keys) : scr(screen), kbd(keys),
-        m_toc(screen, keys, toc_max)
+        m_toc(screen, keys, toc_max),
+        v_server(screen, keys)
 {
         m_toc.geom(0, 0, COLS-1, ROWS);
+        v_server.geom(0, 0, COLS-1, ROWS);
 }
 
 void
@@ -14,6 +16,7 @@ Notes::menu()
 	char sym[5];
 
 	m_toc.reset();
+	m_toc.append("[Server]");
 	codepoint_t *buf = edit->buf;
 	bool fill = false;
 	int off;
@@ -35,25 +38,82 @@ Notes::menu()
 			fill = true;
 			item[0] = 0;
 			off = i;
+			while (i < edit->len-1 && buf[i+1] == ' ')
+				i++;
 		}
 	}
-	if (toc_nr > 0) {
-		edit->pause();
-		push(&m_toc);
+	edit->pause();
+	push(&m_toc);
+}
+void
+Notes::server()
+{
+	WiFiClient cli = srv->available();
+	if (cli.connected()||cli.available()) {
+		Serial.println("Connection on port 1000");
+		cli.write(edit->text());
+		char *buf = (char *)malloc(65536);
+		int i = 0;
+		while ((cli.connected()||cli.available())
+			&& i < 65535) {
+			if (cli.available())
+				buf[i++] = cli.read();
+		}
+		if (i > 0) {
+			Serial.println("Readed: "+String(i)+ " byte(s)");
+			buf[i] = 0;
+			edit->set(buf);
+		}
+		free(buf);
+		cli.stop();
+		return;
 	}
+}
+void
+Notes::start_server()
+{
+	char fmt[512];
+	m_toc.stop();
+	if (WiFi.status() != WL_CONNECTED) {
+		v_server.set("No WiFi connection");
+		push(&v_server);
+		srv = NULL;
+		return;
+	}
+	srv = new WiFiServer(1000);
+	srv->begin();
+	sprintf(fmt, "Get:\nnc %s 1000\n\nExchange:\nnc -N %s 1000 < todo.txt",
+		WiFi.localIP().toString().c_str(),
+		WiFi.localIP().toString().c_str());
+	v_server.set(fmt);
+	push(&v_server);
 }
 
 int
 Notes::process()
 {
 	int m = App::process();
+	if (v_server.is_active()) {
+		server();
+		return APP_NOP;
+	}
 	if (m == APP_NOP)
 		return m;
+
+	if (m == APP_EXIT && app == &v_server) {
+		srv->end();
+		delete(srv);
+		edit->resume();
+		return APP_NOP;
+	}
+
 	if (app == &m_toc) {
 		if (m == APP_EXIT)
 			edit->resume();
-		else if (m >= 0) {
-			int off = toc[m];
+		else if (m == 0) { //server
+			start_server();
+		} else if (m >= 1) {
+			int off = toc[m-1];
 			m_toc.stop();
 			edit->off = off;
 			edit->cur = off;
