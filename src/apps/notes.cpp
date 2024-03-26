@@ -48,6 +48,8 @@ Notes::menu()
 void
 Notes::server()
 {
+	if (!srv)
+		return;
 	WiFiClient cli = srv->available();
 	if (cli.connected()||cli.available()) {
 		Serial.println("Connection on port 1000");
@@ -101,8 +103,10 @@ Notes::process()
 		return m;
 
 	if (m == APP_EXIT && app == &v_server) {
-		srv->end();
-		delete(srv);
+		if (srv) {
+			srv->end();
+			delete(srv);
+		}
 		edit->resume();
 		return APP_NOP;
 	}
