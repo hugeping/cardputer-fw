@@ -70,9 +70,9 @@ status()
 	int x = COLS-1;
 	scr.text_clear(x, 0, 1, ROWS, FG, bg);
 	int status = WiFi.status();
-	if (status == WL_CONNECTED)
+	if (status == WL_CONNECTED) {
 		scr.text_glyph(x, 0, 1, FG, bg);
-	else
+	} else
 		scr.text_glyph(x, 0, ' ', FG, bg);
 
 	if (irc)

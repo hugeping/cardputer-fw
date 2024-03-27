@@ -34,6 +34,10 @@ public:
 	};
 	virtual void background() { };
 	virtual bool push(App *a) {
+		if (a->state == APP_BACKGROUND) {
+			a->resume();
+			return true;
+		}
 		for (int i = 0; i < apps_max; i ++) {
 			if (apps[i])
 				continue;
