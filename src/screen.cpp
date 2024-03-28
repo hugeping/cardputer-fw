@@ -1,4 +1,8 @@
 #include "screen.h"
+
+static const struct font8 *font = &FONT;
+static cell_t screens[2][ROWS*COLS];
+
 Screen::Screen()
 {
 }

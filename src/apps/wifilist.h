@@ -6,11 +6,11 @@ class Wifilist : public App {
 	};
 	AP wifi_ap[wifi_nr];
 	bool wifi_dirty = false;
-	Edit e_pass;
-	Menu m_cancel;
-	Menu m_wifi;
-	View v_info;
 	Screen &scr;
+	Menu m_wifi;
+	Menu m_cancel;
+	Edit e_pass;
+	View v_info;
 	Preferences prefs;
 	void wifi_push(int i);
 	String wifi_get(String ssid);

@@ -37,7 +37,6 @@ Settings::setup()
 int
 Settings::process()
 {
-	char fmt[256];
 	if (mode == brightness) {
 		uint8_t c;
 		while ((c = kbd.input())) {

@@ -2,11 +2,12 @@
 #include "../../internal.h"
 
 static const char *wifi_cancel_menu[] = { "Ok", "Disconnect", NULL };
-Wifilist::Wifilist(Screen &scr, Keyboard &kbd) :
-	m_wifi(scr, kbd, 64),
-	m_cancel(scr, kbd, wifi_cancel_menu),
-	e_pass(scr, kbd, 128),
-	v_info(scr, kbd), scr(scr)
+Wifilist::Wifilist(Screen &screen, Keyboard &kbd) :
+	scr(screen),
+	m_wifi(screen, kbd, 64),
+	m_cancel(screen, kbd, wifi_cancel_menu),
+	e_pass(screen, kbd, 128),
+	v_info(screen, kbd)
 {
 	e_pass.oneline = true;
 	e_pass.set("");

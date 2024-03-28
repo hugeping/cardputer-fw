@@ -49,7 +49,6 @@ int
 View::process()
 {
 	uint8_t c;
-	codepoint_t cp;
 	const char *sym = NULL;
 	int ret = APP_NOP;
 	bool dirty = false;
@@ -180,7 +179,6 @@ View::append(const char *text)
 	i = 0;
 	int last_i = 0;
 	while (i < sz) {
-		int ox = xx;
 		int oy = yy;
 		fmt_next(buf, last_i, &i, sz, &xx, &yy);
 		if (yy > oy || i == sz) {

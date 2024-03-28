@@ -201,7 +201,6 @@ Edit::start()
 void
 Edit::show()
 {
-	int hh = h;
 	int yy = 0;
 	int xx = 0;
 	cur_visible = false;

@@ -107,7 +107,7 @@ Irc::irc_input(char *s)
 			if (*p)
 				*p++ = 0;
 			if (!*p)
-				p = "Bye!";
+				p = (char*)"Bye!";
 			sprintf(fmt, "PART %s :%s", s, p);
 			cli->println(fmt);
 			return;
@@ -160,7 +160,7 @@ Irc::irc_reply(char *cmd)
 			sprintf(fmt, "%s: <%s> %s", par, usr, txt);
 		view.append(fmt);
 	} else if (!strcmp("PING", cmd)) {
-		sprintf(fmt, "PONG ", txt);
+		sprintf(fmt, "PONG %s", txt);
 		cli->println(fmt);
 	} else {
 		if (strcmp(usr, last_usr)) {

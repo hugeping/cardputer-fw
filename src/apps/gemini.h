@@ -1,12 +1,12 @@
 #define MAX_LINKS 128
 class Gemini : public App {
-	View view;
-	Menu m_links;
-	View v_status;
-	Edit e_input;
-	Edit e_addr;
 	Screen &scr;
 	Keyboard &kbd;
+	Edit e_addr;
+	Edit e_input;
+	Menu m_links;
+	View view;
+	View v_status;
 	WiFiClientSecure client;
 	char status[3];
 	char meta[1025];
@@ -16,7 +16,7 @@ class Gemini : public App {
 	char *last_url = NULL;
 	static const int hist_max = 16;
 	String history[hist_max];
-	int hist_size;
+	int hist_size = 0;
 	int hist_pos = 0;
 	bool req(const char *req);
 	void body();

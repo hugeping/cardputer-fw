@@ -2,7 +2,6 @@
 #define __SCREEN_H_INCLUDED
 #include <M5GFX.h>
 //#include <TFT_eSPI.h>
-#include "../font8x15.h"
 #include "utf8.h"
 
 #define W 240
@@ -10,8 +9,7 @@
 
 typedef uint16_t color_t;
 
-static const struct font8 *font = &FONT;
-
+#include "../font8x15.h"
 #define COLS (W/FONT_W)
 #define ROWS (H/FONT_H)
 #define FG 0xfffd
@@ -22,8 +20,6 @@ typedef struct {
 	color_t bg;
 	color_t fg;
 } cell_t;
-
-static cell_t screens[2][ROWS*COLS];
 
 class Screen
 {

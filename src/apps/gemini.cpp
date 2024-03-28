@@ -1,13 +1,13 @@
 #include "../../external.h"
 #include "../../internal.h"
 
-Gemini::Gemini(Screen &scr, Keyboard &kbd) :
-	view(scr, kbd),
-	v_status(scr, kbd),
-	m_links(scr, kbd, MAX_LINKS),
-	e_input(scr, kbd, 1024),
-	e_addr(scr, kbd, 256),
-	scr(scr), kbd(kbd)
+Gemini::Gemini(Screen &screen, Keyboard &keys) :
+	scr(screen), kbd(keys),
+	e_addr(screen, keys, 256),
+	e_input(screen, keys, 1024),
+	m_links(screen, keys, MAX_LINKS),
+	view(screen, keys),
+	v_status(screen, keys)
 {
 	e_input.oneline = true;
 	e_addr.oneline = true;
@@ -184,7 +184,7 @@ Gemini::reqURI(const char *uri, bool hist)
 //	Serial.println("reqURI:"+String(uri));
 	if (last_url && hist) {
 		history[(hist_pos++)%hist_max] = String(last_url);
-		hist_size = max(++hist_size, hist_max);
+		hist_size = max(hist_size + 1, hist_max);
 	}
 	if (!strncmp(uri, "gemini://", 9)) {
 		free(server);
@@ -225,9 +225,9 @@ void
 Gemini::input(const char *msg)
 {
 	view.pause();
-	int x, y;
+	int y;
 	scr.off2xy(scr.text(0, 0, msg, true, COLS-1, ROWS), NULL, &y);
-	y = min(ROWS-1, ++y);
+	y = min(ROWS-1, y+1);
 	e_input.geom(0, y, COLS-1, 1);
 	push(&e_input);
 }
