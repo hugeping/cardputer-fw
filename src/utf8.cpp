@@ -83,7 +83,9 @@ utf8::from_codepoint(codepoint_t cp, char *out)
 			out[1] = (char) (((cp >> 0) & 0x3F) | 0x80);
 		}
 		return 2;
-	} else if (cp <= 0xFFFF) {
+	}
+#if 0
+	else if (cp <= 0xFFFF) {
 		// 3-byte unicode
 		if (out) {
 			out[0] = (char) (((cp >> 12) & 0x0F) | 0xE0);
@@ -101,6 +103,7 @@ utf8::from_codepoint(codepoint_t cp, char *out)
 		}
 		return 4;
 	}
+#endif
 	return -1;
 }
 const char*
