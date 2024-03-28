@@ -65,7 +65,7 @@ static const char *TAG = "ADC SINGLE";
 static esp_adc_cal_characteristics_t adc1_chars;
 #if !CONFIG_IDF_TARGET_ESP32C3
 //ESP32C3 ADC2 single mode is no longer supported
-static esp_adc_cal_characteristics_t adc2_chars;
+//static esp_adc_cal_characteristics_t adc2_chars;
 #endif
 
 static bool adc_calibration_init(void)
