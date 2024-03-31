@@ -26,6 +26,7 @@ Term::prompt(const char *str)
 {
 	inp_pfx = (str)?utf8::len(str):0;
         int i = 0;
+	pfx = String(str);
         while (str && *str) {
                 codepoint_t cp;
                 str = utf8::to_codepoint(str, &cp);
@@ -86,15 +87,44 @@ Term::process()
 		case KEY_ESC:
 			ret = APP_EXIT;
 			break;
+		case KEY_DOWN:
+			if (hist_pos > 0) {
+				hist_pos--;
+				String h;
+				if (!hist_pos)
+					h = "";
+				else
+					h = hist[(hist_top-hist_pos)%hist_max];
+				h = pfx + h;
+				replace_last(h.c_str());
+				inp_cur = inp_len = utf8::len(h.c_str());
+				dirty = true;
+			}
+			break;
+		case KEY_UP:
+			Serial.println(hist_size);
+			Serial.println(hist_pos);
+			if (hist_size > hist_pos) {
+				hist_pos++;
+				String h = hist[(hist_top-hist_pos)%hist_max];
+				h = pfx + h;
+				replace_last(h.c_str());
+				inp_cur = inp_len = utf8::len(h.c_str());
+				dirty = true;
+			}
+			break;
 		case KEY_ENTER:
-			remove_last();
-			append((const char*)input, inp_len);
-/*
-			char *h = getinp();
-			history[(hist_pos++)%hist_max] = String(h);
-			hist_size = max(hist_size + 1, hist_max);
-			free(h);
-*/
+			{
+				char *h = getinp();
+				if (h[0] && (!hist_size || strcmp(h, hist[hist_top-1].c_str()))) {
+					remove_last();
+					append((const char*)input, inp_len);
+					hist[(hist_top++)%hist_max] = String(h);
+					hist_size = min(hist_size + 1, hist_max);
+					free(h);
+				}
+				hist_pos = 0;
+			}
 			tail();
 			dirty = true;
 			ret = c;
@@ -133,6 +163,13 @@ Term::replace_last(const codepoint_t *text, int size)
 {
 	remove_last();
 	View::append((const char*)text, size);
+}
+
+void
+Term::replace_last(const char *text)
+{
+	remove_last();
+	View::append((const char*)text);
 }
 
 /*

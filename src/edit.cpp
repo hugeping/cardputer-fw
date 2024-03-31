@@ -119,7 +119,6 @@ int
 Edit::process()
 {
 	uint8_t c;
-	codepoint_t cp;
 	const char *sym = NULL;
 	int ret = APP_NOP;
 	bool dirty = false;

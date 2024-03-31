@@ -185,7 +185,7 @@ Gemini::reqURI(const char *uri, bool hist)
 //	Serial.println("reqURI:"+String(uri));
 	if (last_url && hist) {
 		history[(hist_pos++)%hist_max] = String(last_url);
-		hist_size = max(hist_size + 1, hist_max);
+		hist_size = min(hist_size + 1, hist_max);
 	}
 	if (!strncmp(uri, "gemini://", 9)) {
 		free(server);
