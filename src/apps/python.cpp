@@ -120,7 +120,7 @@ Python::process()
 			} else
 				t_repl.inp_append("");
 		} else {
-			// Serial.println(line);
+			Serial.println(line);
 			mp_embed_exec_str(line);
 			free(line);
 			line = NULL;

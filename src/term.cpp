@@ -53,16 +53,19 @@ Term::restore_history(String h)
 	int t = 0;
 //	Serial.println("Restore history");
 //	Serial.println(h);
+//	int nr = 0;
 	while (*str) {
 		t = strcspn(str, "\n");
 //		Serial.println(h.substring(f, f + t));
 		hist[(hist_top++)%hist_max] = h.substring(f, f + t);
 		hist_size = min(hist_size + 1, hist_max);
+//		nr ++;
 		if (!str[t] || !str[t+1])
 			break;
 		str += t + 1;
 		f += t + 1;
 	}
+//	Serial.println(String(nr));
 //	Serial.println("==========");
 }
 
@@ -134,7 +137,8 @@ Term::process()
 		case KEY_ENTER:
 			{
 				char *h = getinp();
-				if (h[0] && (!hist_size || strcmp(h, hist[hist_top-1].c_str()))) {
+				if (h[0] && (!hist_size ||
+					strcmp(h, hist[(hist_top-1)%hist_max].c_str()))) {
 					remove_last();
 					append((const char*)input, inp_len);
 					hist[(hist_top++)%hist_max] = String(h);
