@@ -24,6 +24,10 @@ public:
 	};
 	void prompt(const char *str = NULL);
 	void remove_last();
+	void inp_replace(const char *text) {
+		remove_last();
+		inp_append(text);
+	}
 	void inp_append(const char *text);
 //	void append(const char *text, int sz = -1);
 	Term(Screen &scr, Keyboard &kbd);

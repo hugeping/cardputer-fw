@@ -25,17 +25,7 @@ void
 Term::prompt(const char *str)
 {
 	inp_pfx = (str)?utf8::len(str):0;
-        int i = 0;
 	pfx = String(str);
-        while (str && *str) {
-                codepoint_t cp;
-                str = utf8::to_codepoint(str, &cp);
-                input[i++] = cp;
-        }
-        inp_cur = inp_pfx;
-        inp_len = inp_pfx;
-//	remove_last();
-	View::append((const char*)input, inp_len);
 }
 
 Term::~Term()
@@ -95,9 +85,7 @@ Term::process()
 					h = "";
 				else
 					h = hist[(hist_top-hist_pos)%hist_max];
-				h = pfx + h;
-				replace_last(h.c_str());
-				inp_cur = inp_len = utf8::len(h.c_str());
+				inp_replace(h.c_str());
 				dirty = true;
 			}
 			break;
@@ -107,9 +95,7 @@ Term::process()
 			if (hist_size > hist_pos) {
 				hist_pos++;
 				String h = hist[(hist_top-hist_pos)%hist_max];
-				h = pfx + h;
-				replace_last(h.c_str());
-				inp_cur = inp_len = utf8::len(h.c_str());
+				inp_replace(h.c_str());
 				dirty = true;
 			}
 			break;

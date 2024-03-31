@@ -96,6 +96,7 @@ Python::process()
 		t_repl.show();
 	} else if (m == KEY_ENTER) {
 		char *l = t_repl.getinp();
+		int ind = strspn(l, " ");
 		if (!line)
 			line = l;
 		else {
@@ -103,10 +104,15 @@ Python::process()
 			free(line);
 			line = nl;
 		}
-		if (mp_repl_continue_with_input(l)) { /* next */
+		if (mp_repl_continue_with_input(line)) { /* next */
 			t_repl.prompt(". ");
-			t_repl.tail();
-			t_repl.show();
+			if (ind > 0) {
+				char *spaces = (char*)alloca(ind + 1);
+				memset(spaces, ' ', ind);
+				spaces[ind] = 0;
+				t_repl.inp_append(spaces);
+			} else
+				t_repl.inp_append("");
 		} else {
 			Serial.println(line);
 			mp_embed_exec_str(line);
@@ -114,9 +120,10 @@ Python::process()
 			line = NULL;
 			bucket_flush();
 			t_repl.prompt("> ");
-			t_repl.tail();
-			t_repl.show();
+			t_repl.inp_append("");
 		}
+		t_repl.tail();
+		t_repl.show();
 	}
 	return APP_NOP;
 }
@@ -133,6 +140,7 @@ Python::start()
 	App::start();
 	t_repl.reset();
 	t_repl.prompt("> ");
+	t_repl.inp_append("");
 	push(&t_repl);
 }
 
