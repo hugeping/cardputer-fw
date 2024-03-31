@@ -2,6 +2,7 @@ class Python : public App {
 	Term t_repl;
 	char heap[8 * 1024];
 	char *line = NULL;
+	Preferences prefs;
 public:
 	int process();
 	Python(Screen &scr, Keyboard &kbd);

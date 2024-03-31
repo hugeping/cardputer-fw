@@ -32,6 +32,40 @@ Term::~Term()
 {
 }
 
+String
+Term::dump_history()
+{
+	String r;
+	int top = hist_top;
+	for (int i = 0; i < hist_size; i++)
+		r = hist[(--top)%hist_max] + String("\n") + r;
+//	Serial.println("dump history");
+//	Serial.println(r);
+//	Serial.println("=============");
+	return r;
+}
+
+void
+Term::restore_history(String h)
+{
+	const char *str = h.c_str();
+	int f = 0;
+	int t = 0;
+//	Serial.println("Restore history");
+//	Serial.println(h);
+	while (*str) {
+		t = strcspn(str, "\n");
+//		Serial.println(h.substring(f, f + t));
+		hist[(hist_top++)%hist_max] = h.substring(f, f + t);
+		hist_size = min(hist_size + 1, hist_max);
+		if (!str[t] || !str[t+1])
+			break;
+		str += t + 1;
+		f += t + 1;
+	}
+//	Serial.println("==========");
+}
+
 int
 Term::process()
 {
@@ -90,8 +124,6 @@ Term::process()
 			}
 			break;
 		case KEY_UP:
-			Serial.println(hist_size);
-			Serial.println(hist_pos);
 			if (hist_size > hist_pos) {
 				hist_pos++;
 				String h = hist[(hist_top-hist_pos)%hist_max];

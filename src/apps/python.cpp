@@ -28,7 +28,6 @@ extern "C" void mp_write(const char *str, int len)
 	memcpy(nstr, str, len);
 	nstr[len] = 0;
 	len = utf8::len(nstr);
-	Serial.println(String(len));
 	for (int i = 0; i < len; i++) {
 		codepoint_t cp;
 		nstr = (char*)utf8::to_codepoint((const char*)nstr, &cp);
@@ -67,8 +66,15 @@ int
 Python::process()
 {
 	int m = App::process();
-	if (m == APP_NOP || m == APP_EXIT)
+	if (m == APP_NOP)
 		return m;
+	if (m == APP_EXIT) {
+		prefs.begin("python", false);
+		prefs.putString("history", t_repl.dump_history());
+		prefs.end();
+
+		return m;
+	}
 	if (m == KEY_TAB) {
 		const char *compl_str = NULL;
 		ssize_t compl_len;
@@ -87,7 +93,7 @@ Python::process()
 			s[compl_len] = 0;
 			p = String(l) + String(s);
 		} else {
-			Serial.println(String(compl_len));
+//			Serial.println(String(compl_len));
 			p = String(l);
 		}
 		t_repl.inp_append(p.c_str());
@@ -114,7 +120,7 @@ Python::process()
 			} else
 				t_repl.inp_append("");
 		} else {
-			Serial.println(line);
+			// Serial.println(line);
 			mp_embed_exec_str(line);
 			free(line);
 			line = NULL;
@@ -141,6 +147,11 @@ Python::start()
 	t_repl.reset();
 	t_repl.prompt("> ");
 	t_repl.inp_append("");
+
+	prefs.begin("python", true);
+	t_repl.restore_history(prefs.getString("history"));
+	prefs.end();
+
 	push(&t_repl);
 }
 

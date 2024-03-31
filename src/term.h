@@ -32,6 +32,8 @@ public:
 //	void append(const char *text, int sz = -1);
 	Term(Screen &scr, Keyboard &kbd);
 	~Term();
+	String dump_history();
+	void restore_history(String h);
 	int process();
 	void show();
 };
