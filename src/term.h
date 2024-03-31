@@ -9,11 +9,11 @@ class Term : public View {
 	int hist_pos = 0;
 	int hist_top = 0;
 	int inp_pfx = 0;
-public:
 	int inp_cur = 0;
 	int inp_len = 0;
 
 	String pfx;
+public:
 
 	codepoint_t input[inp_size+1];
 	char *getinp();

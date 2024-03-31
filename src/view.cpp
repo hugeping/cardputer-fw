@@ -155,7 +155,7 @@ View::fmt_next(codepoint_t *buf, int last, int *off, int len, int *xx, int *yy)
 }
 
 struct View::line_t *
-View::alloc_line(const codepoint_t *text, int size)
+View::alloc_line(const void *text, int size)
 {
 	int sz = size;
 	codepoint_t *buf;
@@ -177,10 +177,10 @@ View::alloc_line(const codepoint_t *text, int size)
 	ln->buf = buf;
 	if (size >= 0) {
 		for(i = 0; i<size; i++)
-			buf[i] = text[i];
+			buf[i] = ((codepoint_t*)text)[i];
 	} else {
 		const char *p = (const char*)text;
-		for(i = 0; i<sz && *text; i++) {
+		for(i = 0; i<sz && *p; i++) {
 			p = utf8::to_codepoint(p, &cp);
 			buf[i] = cp;
 		}
@@ -215,9 +215,9 @@ View::alloc_line(const codepoint_t *text, int size)
 }
 
 void
-View::append(const char *text, int sz)
+View::append(const void *text, int sz)
 {
-	struct line_t *ln = alloc_line((codepoint_t*)text, sz);
+	struct line_t *ln = alloc_line(text, sz);
 	if (!ln)
 		return;
 

@@ -16,7 +16,7 @@ protected:
 	Screen &scr;
 	Keyboard &kbd;
 	void free_line(struct line_t *beign);
-	struct line_t *alloc_line(const codepoint_t *text, int sz = -1);
+	struct line_t *alloc_line(const void *text, int sz = -1);
 	bool fmt_next(codepoint_t *buf, int last, int *off, int len, int *xx, int *yy);
 public:
 	bool wrap_by_words = true;
@@ -46,7 +46,13 @@ public:
 	};
 	void trim_head(int nr);
 	void tail();
-	virtual void append(const char *text, int size = -1);
+	void append(const void *text, int size = -1);
+	void append(const char *text) {
+		append((void*)text, -1);
+	}
+	void append(const codepoint_t *text, int size) {
+		append((void*)text, size);
+	}
 	void set(const char *text);
 	void reset();
 	void up(int nr = 1);
