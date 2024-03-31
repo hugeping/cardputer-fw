@@ -179,7 +179,7 @@ Wifilist::start()
 	}
 	WiFi.disconnect(true);
 	m_wifi.reset();
-	m_wifi.append("Подождите...");
+	m_wifi.append("Scanning...");
 	m_wifi.show();
 
 	int nr = WiFi.scanNetworks();
