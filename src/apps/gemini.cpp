@@ -57,6 +57,7 @@ Gemini::req(const char* req)
 {
 	String ans;
 	const char *str;
+//	Serial.println("'"+String(req)+"'");
 	client.println(req);
 	ans = client.readStringUntil('\n');
 	str = ans.c_str();
@@ -167,9 +168,14 @@ normpath(char *path)
 		src += strspn(src, "/");
 	}
 }
+
 static char*
 dirpath(char *path)
 {
+	if (!strncmp(path, "gemini://", 9) &&
+		!path[9+strcspn(path+9, "/")])
+			return path;
+
 	if (!path[strcspn(path, "/")])
 		return path;
 	char *eptr = path + strlen(path);
