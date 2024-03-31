@@ -10,21 +10,33 @@ static Term *g_repl = NULL;
 
 static codepoint_t bucket[COLS-1];
 static int bucket_len = 0;
+static void
+
+bucket_flush()
+{
+	if (!bucket_len)
+		return;
+	g_repl->append((const char*)bucket, bucket_len);
+	bucket_len = 0;
+}
 
 extern "C" void mp_write(const char *str, int len)
 {
-	Serial.write(str, len);
-//	Serial.println(str);
+	if (!len)
+		return;
+	char *nstr = (char*)alloca(len + 1);
+	memcpy(nstr, str, len);
+	nstr[len] = 0;
+	len = utf8::len(nstr);
+	Serial.println(String(len));
 	for (int i = 0; i < len; i++) {
 		codepoint_t cp;
-		str = utf8::to_codepoint(str, &cp);
+		nstr = (char*)utf8::to_codepoint((const char*)nstr, &cp);
 		if (cp == '\r')
 			continue;
 		bucket[bucket_len++] = cp;
-		if (cp == '\n' || bucket_len >= COLS-1) {
-			g_repl->append((const char*)bucket, bucket_len);
-			bucket_len = 0;
-		}
+		if (cp == '\n' || bucket_len >= COLS-1)
+			bucket_flush();
 	}
 }
 
@@ -57,7 +69,32 @@ Python::process()
 	int m = App::process();
 	if (m == APP_NOP || m == APP_EXIT)
 		return m;
-	if (m == KEY_ENTER) {
+	if (m == KEY_TAB) {
+		const char *compl_str = NULL;
+		ssize_t compl_len;
+
+		char *l = t_repl.getinp();
+		String p;
+		t_repl.remove_last();
+		compl_len = mp_repl_autocomplete(l, strlen(l),
+			&mp_plat_print, &compl_str);
+
+		bucket_flush();
+
+		if (compl_len > 0) {
+			char *s = (char*)alloca(compl_len + 1);
+			memcpy(s, compl_str, compl_len);
+			s[compl_len] = 0;
+			p = String(l) + String(s);
+		} else {
+			Serial.println(String(compl_len));
+			p = String(l);
+		}
+		t_repl.inp_append(p.c_str());
+		free(l);
+		t_repl.tail();
+		t_repl.show();
+	} else if (m == KEY_ENTER) {
 		char *l = t_repl.getinp();
 		if (!line)
 			line = l;
@@ -75,10 +112,7 @@ Python::process()
 			mp_embed_exec_str(line);
 			free(line);
 			line = NULL;
-			if (bucket_len > 0) {
-				g_repl->append((const char*)bucket, bucket_len);
-				bucket_len = 0;
-			}
+			bucket_flush();
 			t_repl.prompt("> ");
 			t_repl.tail();
 			t_repl.show();

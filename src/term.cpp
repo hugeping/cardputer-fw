@@ -172,15 +172,23 @@ Term::replace_last(const char *text)
 	View::append((const char*)text);
 }
 
-/*
+
 void
-Term::append(const char *text, int sz)
+Term::inp_append(const char *text)
 {
-	remove_last();
-	View::append(text, sz);
+//	remove_last();
+	String l = pfx + String(text);
+        const char *str = l.c_str();
+	View::append(str);
 //	View::append((const char*)input, inp_len);
+        for (inp_len = 0; *str;) {
+                codepoint_t cp;
+                str = utf8::to_codepoint(str, &cp);
+                input[inp_len++] = cp;
+        }
+        inp_cur = inp_len;
 }
-*/
+
 
 void
 Term::show()
@@ -199,6 +207,7 @@ Term::show()
 		yy ++;
 		hh --;
 	}
+
 	if (pos != last)
 		return;
 	int c = 0;
