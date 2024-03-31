@@ -5,6 +5,7 @@ Libraries:
 https://github.com/m5stack/M5GFX
 
 */
+
 Screen scr = Screen();
 Keyboard kbd = Keyboard();
 Settings settings = Settings(scr, kbd);
@@ -12,11 +13,10 @@ Settings settings = Settings(scr, kbd);
 Gemini *gemini = NULL;
 Irc *irc = NULL;
 Notes *notes = NULL;
+Python *python = NULL;
 
-Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Notes", "Gemini", "IRC", "Settings", NULL });
+Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Notes", "Gemini", "IRC", "Python", "Settings", NULL });
 Wifilist wifi(scr, kbd);
-
-Edit *edit = new Edit(scr, kbd, 2048);
 
 App app;
 
@@ -31,7 +31,6 @@ setup()
 	wifi.setup();
 	Serial.println("Started");
 	main_menu.geom(0, 0, COLS-1, ROWS);
-	edit->geom(0, 0, COLS-1, ROWS);
 	app.push(&main_menu);
 }
 
@@ -132,6 +131,15 @@ loop()
 			}
 			break;
 		case 4:
+			if (!python) {
+				python = new Python(scr, kbd);
+				app.push(python);
+			} else {
+				Serial.println("Resume repl");
+				python->resume();
+			}
+			break;
+		case 5:
 			app.push(&settings);
 			break;
 		}
@@ -149,6 +157,9 @@ loop()
 			} else if (app.app == notes) {
 				delete(notes);
 				notes = NULL;
+			} else if (app.app == python) {
+				delete(python);
+				python = NULL;
 			}
 		}
 	} else if (m == APP_BG) {

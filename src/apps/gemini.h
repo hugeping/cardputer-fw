@@ -1,4 +1,4 @@
-#define MAX_LINKS 128
+#define MAX_LINKS 256
 class Gemini : public App {
 	Screen &scr;
 	Keyboard &kbd;
@@ -15,7 +15,7 @@ class Gemini : public App {
 	char *server = NULL;
 	char *last_url = NULL;
 	static const int hist_max = 16;
-	String history[hist_max];
+	String history[hist_max] = {};
 	int hist_size = 0;
 	int hist_pos = 0;
 	bool req(const char *req);

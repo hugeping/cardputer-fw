@@ -58,6 +58,7 @@ View::process()
 			down();
 			dirty = true;
 			break;
+		case KEY_PGDOWN:
 		case KEY_RIGHT:
 			down(h);
 			dirty = true;
@@ -66,6 +67,7 @@ View::process()
 			up();
 			dirty = true;
 			break;
+		case KEY_PGUP:
 		case KEY_LEFT:
 			up(h);
 			dirty = true;
@@ -88,16 +90,24 @@ View::process()
 		show();
 	return ret;
 }
+
+void
+View::free_line(struct line_t *ln)
+{
+	while (ln) {
+		struct line_t *p = ln;
+		ln = ln->next;
+		free(p);
+	}
+}
+
 void
 View::reset()
 {
-	while (begin) {
-		struct line_t *p = begin;
-		begin = begin->next;
-		free(p);
-	}
+	free_line(begin);
 	begin = NULL;
 	cur = NULL;
+	last = NULL;
 	lines_nr = 0;
 }
 
@@ -112,25 +122,27 @@ View::fmt_next(codepoint_t *buf, int last, int *off, int len, int *xx, int *yy)
 		return false;
 	}
 #ifdef WRAP_BY_WORDS
-	int begin = utf8::start_line(buf + last, *off - last) + last;
-	bool words = false;
+	if (wrap_by_words) {
+		int begin = utf8::start_line(buf + last, *off - last) + last;
+		bool words = false;
 
-	for (int i = begin; i < *off; i ++) {
-		if (utf8::is_space(buf[i])) {
-			words = true;
-			break;
+		for (int i = begin; i < *off; i ++) {
+			if (utf8::is_space(buf[i])) {
+				words = true;
+				break;
+			}
 		}
-	}
 
-	for (int i = 0; words && *off + i < len; i ++) {
-		if (*xx + i >= w) {
-			*xx = 0;
-			(*yy) ++;
-			return false;
+		for (int i = 0; words && *off + i < len; i ++) {
+			if (*xx + i >= w) {
+				*xx = 0;
+				(*yy) ++;
+				return false;
+			}
+			cp = buf[*off + i];
+			if (utf8::is_space(cp) || cp == '\n')
+				break;
 		}
-		cp = buf[*off + i];
-		if (utf8::is_space(cp) || cp == '\n')
-			break;
 	}
 #endif
 	(*xx) ++;
@@ -142,37 +154,36 @@ View::fmt_next(codepoint_t *buf, int last, int *off, int len, int *xx, int *yy)
 	return true;
 }
 
-void
-View::append(const char *text)
+struct View::line_t *
+View::alloc_line(const codepoint_t *text, int size)
 {
-	int sz = utf8::len(text);
+	int sz = size;
 	codepoint_t *buf;
+	if (size < 0)
+		sz = utf8::len((const char*)text);
 	codepoint_t cp;
 	struct line_t *ln = (struct line_t*)malloc(sizeof(struct line_t)
 		+ (sz+1)*sizeof(codepoint_t));
 	int i;
 	if (!ln)
-		return;
+		return NULL;
+	struct line_t *first = ln;
 	ln->next = NULL;
+	ln->prev = NULL;
 	ln->len = 0;
-	ln->chunks = 0;
+	ln->chunks = 1;
 	int *chunks = &ln->chunks;
-	lines_nr ++;
-	if (!begin) {
-		begin = ln;
-		ln->prev = NULL;
-		cur = ln;
-	} else {
-		struct line_t *p = begin;
-		while (p->next) p = p->next;
-		p->next = ln;
-		ln->prev = p;
-	}
 	buf = (codepoint_t *)(ln + 1);
 	ln->buf = buf;
-	for(i = 0; i<sz && *text; i++) {
-		text = utf8::to_codepoint(text, &cp);
-		buf[i] = cp;
+	if (size >= 0) {
+		for(i = 0; i<size; i++)
+			buf[i] = text[i];
+	} else {
+		const char *p = (const char*)text;
+		for(i = 0; i<sz && *text; i++) {
+			p = utf8::to_codepoint(p, &cp);
+			buf[i] = cp;
+		}
 	}
 	int xx = 0;
 	int yy = 0;
@@ -187,17 +198,41 @@ View::append(const char *text)
 			last_i = i;
 			if (i < sz) {
 				struct line_t *nl = (struct line_t*)malloc(sizeof(struct line_t));
-				if (!nl)
-					return;
+				if (!nl) {
+					free_line(ln);
+					return NULL;
+				}
 				nl->chunks = 0;
 				nl->buf = buf + i;
 				nl->prev = ln;
 				ln->next = nl;
 				ln = nl;
 				(*chunks) ++;
-				lines_nr ++;
 			}
 		}
+	}
+	return first;
+}
+
+void
+View::append(const char *text, int sz)
+{
+	struct line_t *ln = alloc_line((codepoint_t*)text, sz);
+	if (!ln)
+		return;
+
+	lines_nr += ln->chunks;
+	if (!begin) {
+		begin = ln;
+		ln->prev = NULL;
+		cur = ln;
+		last = ln;
+	} else {
+		struct line_t *p = last;
+		while (p->next) p = p->next;
+		p->next = ln;
+		ln->prev = p;
+		last = ln;
 	}
 }
 
@@ -215,6 +250,8 @@ View::trim_head(int nr)
 		free(p);
 		nr --;
 		lines_nr --;
+		if (chunks)
+			chunks --;
 		while (chunks --) {
 			p = pos;
 			pos = pos->next;

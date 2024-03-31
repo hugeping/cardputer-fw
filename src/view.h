@@ -1,4 +1,5 @@
 class View : public App {
+protected:
 	struct line_t;
 
 	struct line_t {
@@ -8,14 +9,17 @@ class View : public App {
 		int len;
 		int chunks;
 	};
-
 	struct line_t *begin = NULL;
 	struct line_t *cur = NULL;
+	struct line_t *last = NULL;
 	int lines_nr = 0;
 	Screen &scr;
 	Keyboard &kbd;
+	void free_line(struct line_t *beign);
+	struct line_t *alloc_line(const codepoint_t *text, int sz = -1);
 	bool fmt_next(codepoint_t *buf, int last, int *off, int len, int *xx, int *yy);
 public:
+	bool wrap_by_words = true;
 	boolean visible = false;
 
 	int x = 0;
@@ -25,14 +29,14 @@ public:
 
 	View(Screen &scr, Keyboard &kbd);
 
-	~View();
-	void start() {
+	virtual ~View();
+	virtual void start() {
 		App::start();
 		show();
+		kbd.set_fn_mode(true);
 	};
-	void resume() {
-		App::start();
-		show();
+	virtual void resume() {
+		start();
 	};
 	void geom(int x, int y, int w, int h) {
 		this->x = x;
@@ -42,11 +46,11 @@ public:
 	};
 	void trim_head(int nr);
 	void tail();
-	void append(const char *text);
+	virtual void append(const char *text, int size = -1);
 	void set(const char *text);
 	void reset();
 	void up(int nr = 1);
 	void down(int nr = 1);
-	int process();
-	void show();
+	virtual int process();
+	virtual void show();
 };

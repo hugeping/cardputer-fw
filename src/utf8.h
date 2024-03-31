@@ -16,6 +16,8 @@ public:
 	static int fmt_up(codepoint_t *buf, int off, int w);
 	static int fmt_down(codepoint_t *buf, int off, int len, int w);
 	static bool is_space(codepoint_t cp);
+	static void rem_left(codepoint_t *edit, int *cur, int *len);
+	static void insert(codepoint_t *edit, int *cur, int *len, codepoint_t cp);
 };
 
 #endif

@@ -19,10 +19,13 @@ enum keycode_t {
 	KEY_SPACE,
 	KEY_TAB,
 	KEY_UP,
+	KEY_PGUP,
+	KEY_PGDOWN,
 };
 
 struct keysym_t {
 	uint8_t code;
+	uint8_t ctrl_code;
 	struct layout {
 		const char *sym;
 		const char *shift_sym;

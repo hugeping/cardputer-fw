@@ -128,11 +128,9 @@ Edit::process()
 			sym = "\n";
 		}
 		if (sym && len < size) {
-			memmove(&buf[cur+1], &buf[cur], sizeof(codepoint_t)*(len-cur+1));
+			codepoint_t cp;
 			utf8::to_codepoint(sym, &cp);
-			buf[cur] = cp;
-			cur ++;
-			len ++;
+			utf8::insert(buf, &cur, &len, cp);
 			dirty = true;
 			c = -1;
 			ret = 0;
@@ -164,9 +162,7 @@ Edit::process()
 			break;
 		case KEY_BS:
 			if (cur > 0 && len >0) {
-				memmove(&buf[cur-1], &buf[cur], sizeof(codepoint_t)*(len-cur+1));
-				cur --;
-				len --;
+				utf8::rem_left(buf, &cur, &len);
 				dirty = true;
 			}
 			break;

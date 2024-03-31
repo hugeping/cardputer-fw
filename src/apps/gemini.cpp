@@ -130,7 +130,8 @@ Gemini::body()
 			} else {
 				link = line.substring(s);
 			}
-			if (!link.startsWith("http:") &&
+			if (links_nr < MAX_LINKS &&
+				!link.startsWith("http:") &&
 				!link.startsWith("https:")) {
 				links[links_nr++] = link;
 				m_links.append(line.c_str() + s);

@@ -1,3 +1,4 @@
+#include <string.h>
 #include "utf8.h"
 bool
 utf8::is_space(codepoint_t cp)
@@ -141,4 +142,24 @@ utf8::index(const char *p, int pos)
 	while (*p && pos --)
 		p = to_codepoint(p);
 	return p;
+}
+
+void
+utf8::insert(codepoint_t *edit, int *cur, int *len, codepoint_t cp)
+{
+	memmove(&edit[*cur+1], &edit[*cur],
+		sizeof(codepoint_t)*(*len-(*cur)+1));
+	edit[*cur] = cp;
+	(*cur) ++;
+	(*len) ++;
+}
+
+void
+utf8::rem_left(codepoint_t *edit, int *cur, int *len)
+{
+
+	memmove(&edit[*cur-1], &edit[*cur],
+		sizeof(codepoint_t)*(*len-(*cur)+1));
+	(*cur) --;
+	(*len) --;
 }
