@@ -5,9 +5,9 @@ Libraries:
 https://github.com/m5stack/M5GFX
 
 */
-
+Sound snd = Sound();
 Screen scr = Screen();
-Keyboard kbd = Keyboard();
+Keyboard kbd = Keyboard(snd);
 Settings settings = Settings(scr, kbd);
 
 Gemini *gemini = NULL;
@@ -30,6 +30,8 @@ setup()
 	scr.setup();
 	kbd.setup();
 	wifi.setup();
+	snd.setup();
+
 	Serial.println("Started");
 	main_menu.geom(0, 0, COLS-1, ROWS);
 	app.push(&main_menu);

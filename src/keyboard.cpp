@@ -73,7 +73,8 @@ static const keysym_t *keymap[] =  { row0, row1, row2, row3 };
 uint8_t Keyboard::state[4][14];
 
 
-Keyboard::Keyboard()
+Keyboard::Keyboard(Sound &snd) :
+	snd(snd)
 {
 	inp_fifo = { 0, 0, { }};
 }
@@ -255,6 +256,8 @@ Keyboard::poll(void)
 			uint8_t n = new_state[y][x];
 			uint8_t code = y*14 + x;
 			if (old != n) {
+				if (n)
+					play_key();
 				process_event(new_state, code, n);
 				state[y][x] = n;
 			} else if (n &&

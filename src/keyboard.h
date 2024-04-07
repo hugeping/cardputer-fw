@@ -1,6 +1,7 @@
 #ifndef __KEYBOARD_H_INCLUDED
 #define __KEYBOARD_H_INCLUDED
 #include "../external.h"
+#include "sound.h"
 
 enum keycode_t {
 	KEY_ALT = 128,
@@ -35,6 +36,7 @@ struct keysym_t {
 
 class Keyboard
 {
+	Sound &snd;
 	static const int fifo_len = 8;
 	static const int poll_filter = 8;
 
@@ -59,7 +61,15 @@ class Keyboard
 	void layout_toggle();
 	bool fn_mode = false;
 	bool shift_mode = false;
+	bool sound_mode = false;
 public:
+	void play_key() {
+		if (!sound_mode)
+			return;
+		snd.set_vol(72);
+		snd.tone(5000, 20);
+	};
+	void set_sound_mode(bool m) { sound_mode = m; };
 	void set_fn_mode(bool m) { fn_mode = m; };
 	void set_shift_mode(bool m) { shift_mode = m; };
 	bool get_fn(void) { return state[2][0] ^ fn_mode; };
@@ -67,7 +77,7 @@ public:
 	bool get_ctrl(void) { return state[3][0]; };
 	bool get_alt(void) { return state[3][2]; };
 	bool get_layout(void) { return layout; };
-	Keyboard();
+	Keyboard(Sound &snd);
 	void setup();
 	uint8_t input(const char **sym = NULL);
 	void inp_add(uint8_t code, const char *sym);
