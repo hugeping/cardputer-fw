@@ -14,8 +14,9 @@ Gemini *gemini = NULL;
 Irc *irc = NULL;
 Notes *notes = NULL;
 Python *python = NULL;
+Metar *metar = NULL;
 
-Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Notes", "Gemini", "IRC", "Python", "Settings", NULL });
+Menu main_menu(scr, kbd, (const char *[]){ "WiFi", "Notes", "Gemini", "IRC", "Python", "METAR", "Settings", NULL });
 Wifilist wifi(scr, kbd);
 
 App app;
@@ -140,6 +141,10 @@ loop()
 			}
 			break;
 		case 5:
+			metar = new Metar(scr, kbd);
+			app.push(metar);
+			break;
+		case 6:
 			app.push(&settings);
 			break;
 		}
@@ -160,6 +165,9 @@ loop()
 			} else if (app.app == python) {
 				delete(python);
 				python = NULL;
+			} else if (app.app == metar) {
+				delete(metar);
+				metar = NULL;
 			}
 		}
 	} else if (m == APP_BG) {

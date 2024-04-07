@@ -13,3 +13,4 @@
 #include "src/apps/notes.h"
 #include "src/apps/python.h"
 #include "src/apps/settings.h"
+#include "src/apps/metar.h"

@@ -42,7 +42,7 @@ Edit::text()
 	int sz = 0;
 	for (int i = 0; i < len; i ++)
 		sz += utf8::from_codepoint(buf[i]);
-	if (sz > text_size) {
+	if (sz > text_size || !text_size) {
 		if (text_buf)
 			free(text_buf);
 		text_buf = (char*)malloc(sz + 1);

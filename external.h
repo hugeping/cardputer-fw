@@ -3,3 +3,4 @@
 #include <WiFiClientSecure.h>
 #include <Preferences.h>
 #include <string.h>
+#include <HTTPClient.h>
