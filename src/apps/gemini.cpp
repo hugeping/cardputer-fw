@@ -352,7 +352,7 @@ Gemini::start()
 		prefs.begin("gemini", true);
 		String url = prefs.getString("last_url");
 		if (url == "")
-			request("gemini://geminispace.info");
+			request("gemini://tlgs.one");
 		else
 			request(url.c_str());
 		prefs.end();
